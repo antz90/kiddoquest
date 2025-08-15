@@ -1,0 +1,285 @@
+/**
+ * Custom styles to immediately follow Tailwind’s `components` layer
+ *
+ * “Add more opinionated, complex classes like buttons, form controls, alerts,
+ * etc; the sort of pre-built components you often see in other frameworks that
+ * you might need to override with utility classes.”
+ *
+ * — from https://tailwindcss.com/docs/plugins#adding-components
+ */
+
+/**
+ * Post title styles
+ *
+ * These will be applied to all headings with a `page-title` or `entry-title`
+ * class on the frontend and to the post title in the block editor.
+ *
+ * The supplied styles are meant to match the default `h1` classes from
+ * Tailwind Typography.
+ */
+.page-title,
+.entry-title {
+	@apply max-w-content mx-auto mb-6 text-3xl font-extrabold text-neutral-900;
+}
+
+/**
+ * Layout styles for centered content areas
+ *
+ * If you are controlling the width of your content area with styles applied
+ * to its container, you can delete the following styles whose selectors begin
+ * with `.page-content >` and `.entry-content >`. For more details, please see
+ * the following:
+ *
+ * https://make.wordpress.org/core/2021/06/29/on-layout-and-content-width-in-wordpress-5-8/
+ */
+.page-content > *,
+.entry-content > * {
+	/* Content width from the `theme.json` file */
+	@apply max-w-content mx-auto;
+}
+
+.entry-content > .alignwide {
+	/* Wide width from the `theme.json` file */
+	@apply max-w-wide;
+}
+
+.entry-content > .alignfull {
+	@apply max-w-none;
+}
+
+.entry-content > .alignleft {
+	@apply float-left mr-8;
+}
+
+.entry-content > .alignright {
+	@apply float-right ml-8;
+}
+
+/* GAME */
+
+body {
+	font-family: "Nunito", sans-serif;
+	background: linear-gradient(
+		180deg,
+		#87ceeb 0%,
+		#a0e9ff 100%
+	); /* Sky gradient */
+	overflow: hidden;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	min-height: 100vh;
+	&.page-template-template-pilih-pemain,
+	&.page-template-template-login {
+		background: #a0e9ff url("./img/bg_login.jpeg") center no-repeat;
+		background-size: cover;
+	}
+}
+
+h1,
+h2,
+h3,
+.font-game {
+	@apply font-alt;
+}
+
+.btn-game {
+	background-color: #ff9f1c; /* Orange */
+	color: white;
+	border-radius: 9999px;
+	padding: 0.75rem 1.5rem;
+	font-family: "Fredoka One", cursive;
+	text-transform: uppercase;
+	letter-spacing: 1px;
+	border: 4px solid white;
+	box-shadow: 0 5px 0 #e68a00; /* 3D effect */
+	transition: all 0.1s ease-in-out;
+	cursor: pointer;
+}
+.btn-game:active {
+	transform: translateY(3px);
+	box-shadow: 0 2px 0 #e68a00;
+}
+
+.form-container,
+.character-selection-container {
+	background: rgba(255, 255, 255, 0.8);
+	backdrop-filter: blur(10px);
+	padding: 2rem;
+	border-radius: 1.5rem;
+	border: 8px solid #fefae0; /* Creamy border */
+	width: 100%;
+	max-width: 450px;
+	box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+}
+
+.input-field {
+	width: 100%;
+	padding: 0.75rem 1rem;
+	border-radius: 1rem;
+	border: 3px solid #cbd5e1;
+	font-size: 1rem;
+	transition: all 0.2s;
+}
+.input-field:focus {
+	outline: none;
+	border-color: #60a5fa;
+	box-shadow: 0 0 0 3px rgba(96, 165, 250, 0.5);
+}
+
+.character-card {
+	background-color: #fff;
+	border-radius: 1rem;
+	padding: 1rem;
+	text-align: center;
+	border: 4px solid transparent;
+	transition: all 0.2s ease-in-out;
+	cursor: pointer;
+}
+.character-card:hover,
+.character-card.selected {
+	border-color: #ff9f1c;
+	transform: translateY(-10px);
+	box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
+}
+
+.game-world {
+	background-image: url("./img/bg_main.jpeg");
+	background-color: #76c893; /* Grassy green */
+	background-repeat: no-repeat;
+	background-position: center;
+	background-size: cover;
+	height: 100vh;
+	width: 100vw;
+	position: relative;
+	overflow-y: auto;
+	overflow-x: hidden;
+	&::before {
+		content: "";
+		position: fixed;
+		top: 0;
+		right: 0;
+		bottom: 0;
+		left: 0;
+		background-color: rgba(255, 255, 255, 0.39);
+		z-index: 0;
+	}
+}
+
+/* Page overlays */
+.page-overlay {
+	position: fixed;
+	top: 0;
+	left: 0;
+	width: 100%;
+	height: 100%;
+	background-color: rgba(0, 0, 0, 0.5);
+	backdrop-filter: blur(5px);
+	z-index: 40;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	padding: 1rem;
+	transform: scale(1.1);
+	opacity: 0;
+	transition: all 0.3s cubic-bezier(0.18, 0.89, 0.32, 1.28);
+	pointer-events: none;
+}
+.page-overlay.active {
+	transform: scale(1);
+	opacity: 1;
+	pointer-events: auto;
+}
+.page-content {
+	background: white;
+	padding: 1.5rem;
+	border-radius: 1.5rem;
+	border: 8px solid #fefae0; /* Creamy border */
+	width: 100%;
+	max-width: 500px;
+	max-height: 90vh;
+	overflow-y: auto;
+	box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+}
+
+/* Task path styling */
+.task-path {
+	position: relative;
+	padding: 2rem 0;
+}
+.path-line {
+	position: absolute;
+	left: 50%;
+	top: 0;
+	bottom: 0;
+	width: 10px;
+	background-image: url("data:image/svg+xml,%3Csvg width='40' height='40' viewBox='0 0 40 40' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='%239C92AC' fill-opacity='0.2' fill-rule='evenodd'%3E%3Cpath d='M0 40L40 0H20L0 20M40 40V20L20 40'/%3E%3C/g%3E%3C/svg%3E");
+	transform: translateX(-50%);
+	z-index: 1;
+}
+.task-node {
+	position: relative;
+	z-index: 2;
+	cursor: pointer;
+	transition: transform 0.2s ease;
+}
+.task-node:hover {
+	transform: scale(1.1);
+}
+.task-node.completed {
+	pointer-events: none; /* Disable clicking on completed tasks */
+}
+.task-node.completed .task-icon-wrapper {
+	background-color: #fca311; /* Gold */
+	border-color: #fff;
+}
+
+/* --- CHANGE 1: Centered Checkmark --- */
+.task-node.completed .task-icon-wrapper i {
+	opacity: 0.3; /* Make original icon transparent */
+}
+.task-node.completed .task-icon-wrapper::after {
+	content: "✓";
+	position: absolute;
+	top: 50%;
+	left: 50%;
+	transform: translate(-50%, -50%);
+	color: white;
+	font-size: 48px; /* Bigger checkmark */
+	font-weight: bold;
+	text-shadow: 0 0 5px rgba(0, 0, 0, 0.5);
+}
+
+/* --- CHANGE 2: Text Wrapper Color Change --- */
+.task-node.completed .task-text-wrapper {
+	background-color: #dcfce7; /* Tailwind green-100 */
+	border: 2px solid #86efac; /* Tailwind green-300 */
+}
+
+/* Gravity Form */
+.gform_wrapper.gform-theme {
+	.gform_heading {
+		@apply hidden;
+	}
+	.gform_body {
+		.gfield_label {
+			@apply font-alt text-lg font-bold text-gray-500;
+		}
+	}
+	.gform_footer {
+		#gform_submit_button_1 {
+			background-color: #ff9f1c; /* Orange */
+			color: white;
+			border-radius: 9999px;
+			padding: 0.75rem 1.5rem;
+			font-family: "Fredoka One", cursive;
+			text-transform: uppercase;
+			letter-spacing: 1px;
+			border: 4px solid white;
+			box-shadow: 0 5px 0 #e68a00; /* 3D effect */
+			transition: all 0.1s ease-in-out;
+			cursor: pointer;
+			margin: 0 auto;
+		}
+	}
+}

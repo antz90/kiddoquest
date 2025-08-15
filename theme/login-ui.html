@@ -1,0 +1,194 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Selamat Datang di MyKiddo Quest!</title>
+    
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <!-- Google Fonts: Fredoka One (Playful & Bubbly) -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Fredoka+One&family=Nunito:wght@400;700&display=swap" rel="stylesheet">
+    
+    <!-- Lucide Icons -->
+    <script src="https://unpkg.com/lucide@latest"></script>
+
+    <style>
+        body {
+            font-family: 'Nunito', sans-serif;
+            background: linear-gradient(180deg, #87CEEB 0%, #a0e9ff 100%); /* Sky gradient */
+            overflow: hidden;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            min-height: 100vh;
+        }
+
+        h1, h2, h3, .font-game {
+            font-family: 'Fredoka One', cursive;
+        }
+
+        .btn-game {
+            background-color: #ff9f1c; /* Orange */
+            color: white;
+            border-radius: 9999px;
+            padding: 0.75rem 1.5rem;
+            font-family: 'Fredoka One', cursive;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            border: 4px solid white;
+            box-shadow: 0 5px 0 #e68a00; /* 3D effect */
+            transition: all 0.1s ease-in-out;
+            cursor: pointer;
+        }
+        .btn-game:active {
+            transform: translateY(3px);
+            box-shadow: 0 2px 0 #e68a00;
+        }
+
+        .form-container, .character-selection-container {
+            background: rgba(255, 255, 255, 0.8);
+            backdrop-filter: blur(10px);
+            padding: 2rem;
+            border-radius: 1.5rem;
+            border: 8px solid #fefae0; /* Creamy border */
+            width: 100%;
+            max-width: 450px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+        }
+
+        .input-field {
+            width: 100%;
+            padding: 0.75rem 1rem;
+            border-radius: 1rem;
+            border: 3px solid #cbd5e1;
+            font-size: 1rem;
+            transition: all 0.2s;
+        }
+        .input-field:focus {
+            outline: none;
+            border-color: #60a5fa;
+            box-shadow: 0 0 0 3px rgba(96, 165, 250, 0.5);
+        }
+
+        .character-card {
+            background-color: #fff;
+            border-radius: 1rem;
+            padding: 1rem;
+            text-align: center;
+            border: 4px solid transparent;
+            transition: all 0.2s ease-in-out;
+            cursor: pointer;
+        }
+        .character-card:hover, .character-card.selected {
+            border-color: #ff9f1c;
+            transform: translateY(-10px);
+            box-shadow: 0 10px 20px rgba(0,0,0,0.1);
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Login View -->
+    <div id="login-view">
+        <div class="form-container text-center">
+            <h1 class="font-game text-4xl text-blue-600" style="text-shadow: 2px 2px #fff;">MyKiddo Quest</h1>
+            <p class="text-gray-600 mt-2 mb-6">Masuk untuk memulai petualangan!</p>
+            
+            <form id="login-form" class="space-y-4">
+                <div>
+                    <input type="text" placeholder="Nama Pengguna" class="input-field">
+                </div>
+                <div>
+                    <input type="password" placeholder="Kata Sandi" class="input-field">
+                </div>
+                <button type="submit" class="btn-game w-full !mt-6">Masuk</button>
+            </form>
+
+            <p class="text-sm text-gray-500 mt-6">
+                Belum punya akun? <a href="#" class="font-bold text-blue-500 hover:underline">Daftar di sini</a>
+            </p>
+        </div>
+    </div>
+
+    <!-- Character Selection View (Initially Hidden) -->
+    <div id="character-view" class="hidden">
+        <div class="character-selection-container text-center">
+            <h1 class="font-game text-5xl text-blue-600" style="text-shadow: 2px 2px #fff;">MyKiddo Quest</h1>
+            <h2 class="font-game text-3xl text-orange-500 mt-4 mb-6">Pilih Jagoanmu!</h2>
+
+            <div class="grid grid-cols-2 md:grid-cols-3 gap-4">
+                <!-- Character 1 -->
+                <div class="character-card" onclick="selectCharacter(this)">
+                    <img src="https://placehold.co/150x250/0000/FFFFFF?text=Leo" alt="Karakter Leo" class="mx-auto h-48 object-contain">
+                    <p class="font-game text-xl mt-2 text-gray-800">Leo</p>
+                </div>
+                <!-- Character 2 -->
+                <div class="character-card" onclick="selectCharacter(this)">
+                    <img src="https://placehold.co/150x250/0000/FFFFFF?text=Mia" alt="Karakter Mia" class="mx-auto h-48 object-contain">
+                    <p class="font-game text-xl mt-2 text-gray-800">Mia</p>
+                </div>
+                <!-- Character 3 -->
+                <div class="character-card col-span-2 md:col-span-1" onclick="selectCharacter(this)">
+                    <img src="https://placehold.co/150x250/0000/FFFFFF?text=Kiko" alt="Karakter Kiko" class="mx-auto h-48 object-contain">
+                    <p class="font-game text-xl mt-2 text-gray-800">Kiko</p>
+                </div>
+            </div>
+
+            <button id="start-button" class="btn-game w-full !mt-8 bg-gray-400 cursor-not-allowed" disabled>Mulai Petualangan</button>
+        </div>
+    </div>
+
+    <script>
+        const loginView = document.getElementById('login-view');
+        const characterView = document.getElementById('character-view');
+        const loginForm = document.getElementById('login-form');
+        const startButton = document.getElementById('start-button');
+        let selectedCharacterCard = null;
+
+        // Simulate login
+        loginForm.addEventListener('submit', (e) => {
+            e.preventDefault(); // Prevent form from actually submitting
+            
+            // In a real app, you would validate credentials here
+            
+            // Switch views
+            loginView.classList.add('hidden');
+            characterView.classList.remove('hidden');
+        });
+
+        function selectCharacter(cardElement) {
+            // Remove selection from the previously selected card
+            if (selectedCharacterCard) {
+                selectedCharacterCard.classList.remove('selected');
+            }
+
+            // Add selection to the new card
+            cardElement.classList.add('selected');
+            selectedCharacterCard = cardElement;
+            
+            // Enable the start button
+            startButton.disabled = false;
+            startButton.classList.remove('bg-gray-400', 'cursor-not-allowed');
+            startButton.classList.add('bg-green-500');
+            startButton.style.boxShadow = '0 5px 0 #15803d'; // Update shadow color for green button
+        }
+
+        // Handle starting the game
+        startButton.addEventListener('click', () => {
+            if (!selectedCharacterCard) {
+                alert('Pilih jagoanmu dulu!');
+                return;
+            }
+            const characterName = selectedCharacterCard.querySelector('p').textContent;
+            alert(`Memulai petualangan sebagai ${characterName}!`);
+            // In a real app, you would redirect to the main game page:
+            // window.location.href = '/path-to-your-game.html';
+        });
+
+    </script>
+</body>
+</html>

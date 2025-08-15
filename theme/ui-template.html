@@ -1,0 +1,437 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MyKiddo Quest - Edisi Petualangan</title>
+    
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <!-- Google Fonts: Fredoka One (Playful & Bubbly) -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Fredoka+One&family=Nunito:wght@400;700&display=swap" rel="stylesheet">
+    
+    <!-- Lucide Icons -->
+    <script src="https://unpkg.com/lucide@latest"></script>
+
+    <style>
+        /* Custom styles for the new game-like theme */
+        body {
+            font-family: 'Nunito', sans-serif;
+            background: #a0e9ff; /* Light sky blue background */
+            overflow: hidden; /* Prevent scrolling the main body */
+        }
+
+        h1, h2, h3, .font-game {
+            font-family: 'Fredoka One', cursive;
+        }
+
+        /* The main game world container */
+        .game-world {
+            background-image: url('https://www.transparenttextures.com/patterns/light-grass.png');
+            background-color: #76c893; /* Grassy green */
+            height: 100vh;
+            width: 100%;
+            position: relative;
+            overflow-y: auto;
+            overflow-x: hidden;
+        }
+
+        /* Custom button style */
+        .btn-game {
+            background-color: #ff9f1c; /* Orange */
+            color: white;
+            border-radius: 9999px;
+            padding: 0.75rem 1.5rem;
+            font-family: 'Fredoka One', cursive;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            border: 4px solid white;
+            box-shadow: 0 5px 0 #e68a00; /* 3D effect */
+            transition: all 0.1s ease-in-out;
+        }
+        .btn-game:active {
+            transform: translateY(3px);
+            box-shadow: 0 2px 0 #e68a00;
+        }
+
+        /* Page overlays */
+        .page-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.5);
+            backdrop-filter: blur(5px);
+            z-index: 40;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 1rem;
+            transform: scale(1.1);
+            opacity: 0;
+            transition: all 0.3s cubic-bezier(0.18, 0.89, 0.32, 1.28);
+            pointer-events: none;
+        }
+        .page-overlay.active {
+            transform: scale(1);
+            opacity: 1;
+            pointer-events: auto;
+        }
+        .page-content {
+            background: white;
+            padding: 1.5rem;
+            border-radius: 1.5rem;
+            border: 8px solid #fefae0; /* Creamy border */
+            width: 100%;
+            max-width: 500px;
+            max-height: 90vh;
+            overflow-y: auto;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+        }
+        
+        /* Task path styling */
+        .task-path {
+            position: relative;
+            padding: 2rem 0;
+        }
+        .path-line {
+            position: absolute;
+            left: 50%;
+            top: 0;
+            bottom: 0;
+            width: 10px;
+            background-image: url("data:image/svg+xml,%3Csvg width='40' height='40' viewBox='0 0 40 40' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='%239C92AC' fill-opacity='0.2' fill-rule='evenodd'%3E%3Cpath d='M0 40L40 0H20L0 20M40 40V20L20 40'/%3E%3C/g%3E%3C/svg%3E");
+            transform: translateX(-50%);
+            z-index: 1;
+        }
+        .task-node {
+            position: relative;
+            z-index: 2;
+            cursor: pointer;
+            transition: transform 0.2s ease;
+        }
+        .task-node:hover {
+            transform: scale(1.1);
+        }
+        .task-node.completed {
+            pointer-events: none; /* Disable clicking on completed tasks */
+        }
+        .task-node.completed .task-icon-wrapper {
+            background-color: #fca311; /* Gold */
+            border-color: #fff;
+        }
+        
+        /* --- CHANGE 1: Centered Checkmark --- */
+        .task-node.completed .task-icon-wrapper i {
+            opacity: 0.3; /* Make original icon transparent */
+        }
+        .task-node.completed .task-icon-wrapper::after {
+            content: '✓';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            color: white;
+            font-size: 48px; /* Bigger checkmark */
+            font-weight: bold;
+            text-shadow: 0 0 5px rgba(0,0,0,0.5);
+        }
+
+        /* --- CHANGE 2: Text Wrapper Color Change --- */
+        .task-node.completed .task-text-wrapper {
+            background-color: #dcfce7; /* Tailwind green-100 */
+            border: 2px solid #86efac; /* Tailwind green-300 */
+        }
+    </style>
+</head>
+<body>
+
+    <!-- The main game world -->
+    <div id="game-world" class="game-world">
+        
+        <!-- Header -->
+        <header class="p-4 flex justify-between items-center sticky top-0 z-30">
+            <!-- Profile & Level -->
+            <div class="flex items-center gap-3 bg-white/80 backdrop-blur-sm p-2 rounded-full shadow-lg">
+                <img src="https://placehold.co/50x50/60A5FA/FFFFFF?text=A" alt="Avatar Anak" class="w-12 h-12 rounded-full border-4 border-white">
+                <div>
+                    <p class="font-game text-blue-600 text-lg leading-tight">Andi</p>
+                    <div class="w-24 bg-gray-200 rounded-full h-3 mt-1">
+                        <div class="bg-gradient-to-r from-yellow-300 to-orange-400 h-3 rounded-full" style="width: 31.25%"></div>
+                    </div>
+                </div>
+            </div>
+            <!-- Points -->
+            <div class="flex items-center gap-2 bg-white/80 backdrop-blur-sm p-2 rounded-full shadow-lg">
+                <div class="flex items-center gap-1 bg-gray-100 px-3 py-1 rounded-full">
+                    <img src="https://img.icons8.com/color/48/silver-coin.png" class="w-6 h-6" alt="Koin Perak"/>
+                    <span id="silver-coin-balance" class="font-bold text-gray-700 text-lg">1250</span>
+                </div>
+                <div class="flex items-center gap-1 bg-gray-100 px-3 py-1 rounded-full">
+                    <img src="https://img.icons8.com/color/48/gold-coin.png" class="w-6 h-6" alt="Koin Emas"/>
+                    <span id="gold-coin-balance" class="font-bold text-gray-700 text-lg">150</span>
+                </div>
+            </div>
+        </header>
+
+        <!-- Main Content: The Adventure Path -->
+        <main class="relative z-10 p-4">
+            <h1 class="text-4xl text-white text-center font-game mb-6" style="text-shadow: 2px 2px 4px rgba(0,0,0,0.3);">Petualangan Hari Ini</h1>
+            
+            <div class="task-path">
+                <div class="path-line"></div>
+                <!-- Task Node 1 -->
+                <div class="task-node relative flex justify-center mb-24" onclick="completeTask(this)">
+                    <div class="task-icon-wrapper w-20 h-20 bg-blue-400 rounded-full flex items-center justify-center border-4 border-white shadow-lg z-10 relative">
+                        <i data-lucide="bed-double" class="w-10 h-10 text-white transition-opacity"></i>
+                    </div>
+                    <div class="absolute left-1/2 ml-14 top-1/2 -translate-y-1/2 w-40">
+                        <div class="task-text-wrapper bg-white p-3 rounded-lg shadow-md transition-colors">
+                            <p class="task-name font-bold text-gray-700">Merapikan Tempat Tidur</p>
+                            <p class="task-reward text-xs text-gray-500">🏆+50 💰, ✨+10 XP</p>
+                        </div>
+                    </div>
+                </div>
+                <!-- Task Node 2 -->
+                <div class="task-node relative flex justify-center mb-24" onclick="completeTask(this)">
+                    <div class="task-icon-wrapper w-20 h-20 bg-green-500 rounded-full flex items-center justify-center border-4 border-white shadow-lg z-10 relative">
+                        <i data-lucide="trash-2" class="w-10 h-10 text-white transition-opacity"></i>
+                    </div>
+                    <div class="absolute right-1/2 mr-14 top-1/2 -translate-y-1/2 w-40">
+                        <div class="task-text-wrapper bg-white p-3 rounded-lg shadow-md text-right transition-colors">
+                            <p class="task-name font-bold text-gray-700">Membuang Sampah</p>
+                            <p class="task-reward text-xs text-gray-500">🏆+30 💰, ✨+5 XP</p>
+                        </div>
+                    </div>
+                </div>
+                <!-- Task Node 3 -->
+                <div class="task-node relative flex justify-center mb-24" onclick="completeTask(this)">
+                    <div class="task-icon-wrapper w-20 h-20 bg-purple-500 rounded-full flex items-center justify-center border-4 border-white shadow-lg z-10 relative">
+                        <i data-lucide="book-open" class="w-10 h-10 text-white transition-opacity"></i>
+                    </div>
+                    <div class="absolute left-1/2 ml-14 top-1/2 -translate-y-1/2 w-40">
+                        <div class="task-text-wrapper bg-white p-3 rounded-lg shadow-md transition-colors">
+                            <p class="task-name font-bold text-gray-700">Mengerjakan PR</p>
+                            <p class="task-reward text-xs text-gray-500">🏆+100 💰, ✨+25 XP</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </main>
+
+        <!-- Navigation Buildings -->
+        <footer class="absolute bottom-0 w-full p-4 flex justify-around items-end z-20">
+            <div class="flex flex-col items-center text-center" onclick="openPage('rewards')">
+                <img src="https://img.icons8.com/plasticine/100/shop.png" class="w-20 h-20 cursor-pointer hover:scale-110 transition-transform"/>
+                <p class="font-game text-white text-sm -mt-2" style="text-shadow: 1px 1px 2px #000;">Toko</p>
+            </div>
+            <div class="flex flex-col items-center text-center" onclick="openPage('leaderboard')">
+                <img src="https://img.icons8.com/plasticine/100/podium-with-audience.png" class="w-20 h-20 cursor-pointer hover:scale-110 transition-transform"/>
+                <p class="font-game text-white text-sm -mt-2" style="text-shadow: 1px 1px 2px #000;">Peringkat</p>
+            </div>
+             <div class="flex flex-col items-center text-center" onclick="openPage('journal')">
+                <img src="https://img.icons8.com/plasticine/100/book.png" class="w-24 h-24 cursor-pointer hover:scale-110 transition-transform"/>
+                <p class="font-game text-white text-sm -mt-4" style="text-shadow: 1px 1px 2px #000;">Jurnal</p>
+            </div>
+            <div class="flex flex-col items-center text-center" onclick="openPage('awards')">
+                <img src="https://img.icons8.com/plasticine/100/treasure-chest.png" class="w-20 h-20 cursor-pointer hover:scale-110 transition-transform"/>
+                <p class="font-game text-white text-sm -mt-2" style="text-shadow: 1px 1px 2px #000;">Harta Karun</p>
+            </div>
+            <div class="flex flex-col items-center text-center" onclick="openPage('profile')">
+                <img src="https://img.icons8.com/plasticine/100/home.png" class="w-20 h-20 cursor-pointer hover:scale-110 transition-transform"/>
+                <p class="font-game text-white text-sm -mt-2" style="text-shadow: 1px 1px 2px #000;">Profil</p>
+            </div>
+        </footer>
+    </div>
+
+    <!-- PAGE OVERLAYS -->
+    
+    <!-- NEW: Task Complete Popup -->
+    <div id="page-task-complete" class="page-overlay">
+        <div class="page-content text-center relative overflow-visible">
+            <h2 class="font-game text-4xl text-yellow-500" style="text-shadow: 2px 2px #c2410c;">KEREN!</h2>
+            <p class="text-lg mt-2 text-gray-700">Kamu menyelesaikan tugas:</p>
+            <p id="completed-task-name" class="font-bold text-xl text-blue-600"></p>
+            
+            <img id="reward-sticker-img" src="" alt="Stiker Hadiah" class="w-32 h-32 mx-auto my-4 animate-bounce">
+            <p class="text-sm text-gray-500">Kamu dapat stiker baru!</p>
+
+            <div class="mt-4 bg-green-100 p-3 rounded-lg">
+                <p class="font-bold text-green-700 text-lg">Hadiah: <span id="completed-task-reward"></span></p>
+            </div>
+
+            <button onclick="closeAllPages()" class="btn-game mt-6">Lanjut!</button>
+        </div>
+    </div>
+
+    <!-- Toko Reward Page -->
+    <div id="page-rewards" class="page-overlay">
+        <div class="page-content">
+            <h2 class="font-game text-3xl text-center text-orange-500 mb-4">Toko Reward</h2>
+            <div class="grid grid-cols-2 gap-4">
+                 <div class="bg-yellow-50 rounded-2xl p-3 text-center border-4 border-yellow-200">
+                    <img src="https://placehold.co/200x150/A7F3D0/34D399?text=Game+Time!" alt="Reward Game" class="w-full h-24 object-cover rounded-xl">
+                    <p class="font-bold text-sm mt-2 text-gray-700">Ekstra Waktu Main Game</p>
+                    <button class="btn-game mt-2 text-sm w-full">500 💰</button>
+                </div>
+                 <div class="bg-pink-50 rounded-2xl p-3 text-center border-4 border-pink-200">
+                    <img src="https://placehold.co/200x150/FBCFE8/F472B6?text=Es+Krim!" alt="Reward Es Krim" class="w-full h-24 object-cover rounded-xl">
+                    <p class="font-bold text-sm mt-2 text-gray-700">Jajan Es Krim</p>
+                    <button class="btn-game mt-2 text-sm w-full bg-gray-400 box-shadow-none" disabled>300 💰</button>
+                </div>
+            </div>
+            <button onclick="closeAllPages()" class="btn-game bg-red-500 mt-6 mx-auto block">Tutup</button>
+        </div>
+    </div>
+    
+    <!-- Papan Peringkat Page -->
+    <div id="page-leaderboard" class="page-overlay">
+         <div class="page-content">
+            <h2 class="font-game text-3xl text-center text-blue-500 mb-4">Papan Peringkat</h2>
+             <div class="space-y-2">
+                <div class="flex items-center bg-yellow-100 p-3 rounded-full border-4 border-yellow-300">
+                    <span class="font-game text-2xl text-yellow-600 w-8">1</span>
+                    <img src="https://placehold.co/40x40/F87171/FFFFFF?text=D" alt="Avatar" class="w-10 h-10 rounded-full">
+                    <p class="ml-3 font-bold text-gray-800 flex-grow">Dina</p>
+                    <p class="font-game text-yellow-700">✨ 1850</p>
+                </div>
+                <div class="flex items-center bg-gray-100 p-3 rounded-full border-4 border-gray-300">
+                    <span class="font-game text-2xl text-gray-600 w-8">2</span>
+                    <img src="https://placehold.co/40x40/60A5FA/FFFFFF?text=A" alt="Avatar" class="w-10 h-10 rounded-full">
+                    <p class="ml-3 font-bold text-gray-800 flex-grow">Andi</p>
+                    <p class="font-game text-gray-700">✨ 1620</p>
+                </div>
+             </div>
+            <button onclick="closeAllPages()" class="btn-game bg-red-500 mt-6 mx-auto block">Tutup</button>
+        </div>
+    </div>
+
+    <!-- Harta Karun (Awards) Page -->
+    <div id="page-awards" class="page-overlay">
+        <div class="page-content">
+            <h2 class="font-game text-3xl text-center text-green-600 mb-4">Harta Karun</h2>
+            <div class="flex space-x-2 mb-4 bg-green-100 p-1 rounded-full">
+                <button onclick="showAwardSubSection('achievements')" id="achievements-tab" class="w-full py-2 text-sm font-bold bg-white text-green-600 rounded-full shadow">Piala</button>
+                <button onclick="showAwardSubSection('stickers')" id="stickers-tab" class="w-full py-2 text-sm font-bold text-gray-600 rounded-full">Stiker</button>
+            </div>
+            <div id="subsection-achievements">...</div>
+            <div id="subsection-stickers" class="hidden">...</div>
+            <button onclick="closeAllPages()" class="btn-game bg-red-500 mt-6 mx-auto block">Tutup</button>
+        </div>
+    </div>
+
+    <!-- Jurnal Page -->
+    <div id="page-journal" class="page-overlay">
+        <div class="page-content">
+            <h2 class="font-game text-3xl text-center text-purple-500 mb-4">Jurnal Rahasia</h2>
+            <textarea class="w-full h-48 p-3 border-4 border-purple-200 rounded-xl focus:ring-purple-500 focus:border-purple-500 transition" placeholder="Tulis ceritamu di sini..."></textarea>
+            <div class="flex justify-center mt-4">
+                <button onclick="closeAllPages()" class="btn-game">Simpan & Tutup</button>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Profil Page -->
+    <div id="page-profile" class="page-overlay">
+        <div class="page-content">
+            <h2 class="font-game text-3xl text-center text-teal-500 mb-4">Profil & Tema</h2>
+             <div>
+                <h3 class="font-game text-lg text-gray-700 mb-2">Pilih Tema Peta</h3>
+                <div class="space-y-3">
+                    <div class="relative flex items-center p-4 rounded-2xl border-4 border-blue-500 cursor-pointer bg-white">
+                        <div class="w-12 h-12 rounded-lg bg-gradient-to-br from-green-400 to-blue-400"></div>
+                        <p class="ml-4 font-bold text-gray-800">Dunia Rumput</p>
+                        <span class="absolute top-2 right-2 bg-blue-500 text-white text-xs font-bold px-2 py-1 rounded-full">Aktif</span>
+                    </div>
+                    <div class="flex items-center p-4 rounded-2xl border-2 border-gray-200 cursor-pointer bg-white">
+                        <div class="w-12 h-12 rounded-lg bg-gradient-to-br from-yellow-200 to-red-300"></div>
+                        <p class="ml-4 font-bold text-gray-800">Gurun Pasir</p>
+                    </div>
+                </div>
+             </div>
+            <button onclick="closeAllPages()" class="btn-game bg-red-500 mt-6 mx-auto block">Tutup</button>
+        </div>
+    </div>
+
+
+    <script>
+        // --- JavaScript for Interactivity ---
+        const pages = ['rewards', 'leaderboard', 'awards', 'journal', 'profile', 'task-complete'];
+
+        // List of possible sticker rewards
+        const stickerRewards = [
+            'https://img.icons8.com/plasticine/100/cat.png',
+            'https://img.icons8.com/plasticine/100/dog.png',
+            'https://img.icons8.com/plasticine/100/lion.png',
+            'https://img.icons8.com/plasticine/100/panda.png',
+            'https://img.icons8.com/plasticine/100/koala.png',
+            'https://img.icons8.com/plasticine/100/rocket.png',
+            'https://img.icons8.com/plasticine/100/dinosaur.png'
+        ];
+
+        function openPage(pageId) {
+            closeAllPages(); // Close any open pages first
+            const targetPage = document.getElementById(`page-${pageId}`);
+            if (targetPage) {
+                targetPage.classList.add('active');
+            }
+        }
+
+        function closeAllPages() {
+            pages.forEach(id => {
+                const pageElement = document.getElementById(`page-${id}`);
+                if (pageElement) {
+                    pageElement.classList.remove('active');
+                }
+            });
+        }
+
+        function completeTask(taskNodeElement) {
+            // Check if the task is already completed
+            if (taskNodeElement.classList.contains('completed')) {
+                return; 
+            }
+            // Mark the task as completed visually
+            taskNodeElement.classList.add('completed');
+            
+            // --- NEW POPUP LOGIC ---
+            
+            // 1. Get task details from the HTML elements
+            const taskName = taskNodeElement.querySelector('.task-name').textContent;
+            const taskReward = taskNodeElement.querySelector('.task-reward').textContent;
+
+            // 2. Pick a random sticker from the array
+            const randomStickerUrl = stickerRewards[Math.floor(Math.random() * stickerRewards.length)];
+
+            // 3. Populate the popup with the task details and random sticker
+            document.getElementById('completed-task-name').textContent = taskName;
+            document.getElementById('completed-task-reward').textContent = taskReward;
+            document.getElementById('reward-sticker-img').src = randomStickerUrl;
+
+            // 4. Show the "Task Complete" popup
+            openPage('task-complete');
+            
+            // In a real app, you would also update the point balances here
+        }
+        
+        // Dummy function for award subsections
+        function showAwardSubSection(sectionId) {
+            // This would be implemented similarly to the previous version
+            console.log("Showing subsection:", sectionId);
+        }
+
+        // Initial setup on page load
+        document.addEventListener('DOMContentLoaded', () => {
+            lucide.createIcons();
+            // Add content for subsections for demonstration
+            document.getElementById('subsection-achievements').innerHTML = `<p class="text-center text-gray-500">Koleksi pialamu akan muncul di sini!</p>`;
+            document.getElementById('subsection-stickers').innerHTML = `<p class="text-center text-gray-500">Koleksi stikermu akan muncul di sini!</p>`;
+        });
+
+    </script>
+</body>
+</html>
