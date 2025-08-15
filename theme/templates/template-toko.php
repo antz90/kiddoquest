@@ -148,12 +148,32 @@ get_header();
             <h2 class="font-game text-3xl text-white mb-4" style="text-shadow: 1px 1px 2px #000;">Dekorasi Kamar</h2>
             <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
                 <?php
-                $owned_items = get_user_meta($player_id, 'owned_items', true);
-                if (!is_array($owned_items)) {
-                    $owned_items = [];
-                }
+                // 1. Get the active player's gender.
+                $player_gender = get_field('gender_anak', 'user_' . $player_id); // 'cowok' or 'cewek'
 
-                $item_query = new WP_Query(['post_type' => 'item-kamar', 'posts_per_page' => -1]);
+                // 2. Build the query arguments.
+                $item_query_args = [
+                    'post_type' => 'item-kamar',
+                    'posts_per_page' => -1,
+                    'tax_query' => [
+                        'relation' => 'OR', // Show item if it's for their gender OR if it's unisex.
+                        [
+                            'taxonomy' => 'gender-item',
+                            'field'    => 'slug',
+                            'terms'    => $player_gender, // e.g., 'cowok'
+                        ],
+                        [
+                            'taxonomy' => 'gender-item',
+                            'field'    => 'slug',
+                            'terms'    => 'unisex',
+                        ],
+                    ],
+                ];
+                $item_query = new WP_Query($item_query_args);
+
+                $owned_items = get_user_meta($player_id, 'owned_items', true);
+                if (!is_array($owned_items)) $owned_items = [];
+
                 if ($item_query->have_posts()) : while ($item_query->have_posts()) : $item_query->the_post();
                         $item_id = get_the_ID();
                         $price = (int) get_field('harga_item_kamar');

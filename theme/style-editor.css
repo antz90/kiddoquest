@@ -1139,6 +1139,9 @@ h1, h2, h3, .font-game {
 .inline-block {
   display: inline-block;
 }
+.table {
+  display: table;
+}
 .aspect-square {
   aspect-ratio: 1 / 1;
 }
