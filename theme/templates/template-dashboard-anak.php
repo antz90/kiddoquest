@@ -80,6 +80,8 @@ get_header();
                                     ['_key' => '_task_id', 'value' => $task_id],
                                 ],
                                 'fields' => 'ids', // more efficient
+                                'cache_results'          => false, // Jangan simpan hasil query ini di cache
+                                'update_post_meta_cache' => false, // Jangan cache meta datanya juga
                             ]);
                             if ($log_check_query->have_posts()) {
                                 $is_completed = true;
