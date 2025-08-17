@@ -3,6 +3,39 @@
     "title": "Item Kamar",
     "fields": [
         {
+            "allow_backendsearch": false,
+            "show_column_filter": 0,
+            "allow_bulkedit": 0,
+            "allow_quickedit": 0,
+            "show_column": 0,
+            "show_column_weight": 1000,
+            "show_column_sortable": false,
+            "key": "field_68a1e7881d531",
+            "label": "Tipe Harga Item",
+            "name": "tipe_harga_item",
+            "aria-label": "",
+            "type": "radio",
+            "instructions": "",
+            "required": 0,
+            "conditional_logic": 0,
+            "wrapper": {
+                "width": "",
+                "class": "",
+                "id": ""
+            },
+            "choices": {
+                "statis": "Harga Statis (Jumlah Tetap)",
+                "dinamis_adv": "Harga Dinamis Lanjutan (% dari Koin - Diskon)"
+            },
+            "default_value": "",
+            "return_format": "value",
+            "allow_null": 0,
+            "other_choice": 0,
+            "allow_in_bindings": 0,
+            "layout": "horizontal",
+            "save_other_choice": 0
+        },
+        {
             "allow_backendsearch": 0,
             "show_column_filter": false,
             "allow_bulkedit": 0,
@@ -10,14 +43,98 @@
             "show_column": 0,
             "show_column_weight": 1000,
             "show_column_sortable": false,
-            "key": "field_689c3cd1ca936",
-            "label": "Harga Item",
-            "name": "harga_item_kamar",
+            "key": "field_68a1e7ac1d532",
+            "label": "Harga Item Statis",
+            "name": "harga_item_statis",
             "aria-label": "",
             "type": "number",
             "instructions": "",
             "required": 0,
-            "conditional_logic": 0,
+            "conditional_logic": [
+                [
+                    {
+                        "field": "field_68a1e7881d531",
+                        "operator": "==",
+                        "value": "statis"
+                    }
+                ]
+            ],
+            "wrapper": {
+                "width": "",
+                "class": "",
+                "id": ""
+            },
+            "default_value": "",
+            "min": "",
+            "max": "",
+            "allow_in_bindings": 0,
+            "placeholder": "",
+            "step": "",
+            "prepend": "",
+            "append": ""
+        },
+        {
+            "allow_backendsearch": 0,
+            "show_column_filter": false,
+            "allow_bulkedit": 0,
+            "allow_quickedit": 0,
+            "show_column": 0,
+            "show_column_weight": 1000,
+            "show_column_sortable": false,
+            "key": "field_68a1e7c21d533",
+            "label": "Persentase Harga",
+            "name": "persentase_harga_item",
+            "aria-label": "",
+            "type": "number",
+            "instructions": "",
+            "required": 0,
+            "conditional_logic": [
+                [
+                    {
+                        "field": "field_68a1e7881d531",
+                        "operator": "==",
+                        "value": "dinamis_adv"
+                    }
+                ]
+            ],
+            "wrapper": {
+                "width": "",
+                "class": "",
+                "id": ""
+            },
+            "default_value": "",
+            "min": "",
+            "max": "",
+            "allow_in_bindings": 0,
+            "placeholder": "",
+            "step": "",
+            "prepend": "",
+            "append": ""
+        },
+        {
+            "allow_backendsearch": 0,
+            "show_column_filter": false,
+            "allow_bulkedit": 0,
+            "allow_quickedit": 0,
+            "show_column": 0,
+            "show_column_weight": 1000,
+            "show_column_sortable": false,
+            "key": "field_68a1e7ea1d534",
+            "label": "Pengurangan Harga (Diskon)",
+            "name": "pengurangan_harga_item",
+            "aria-label": "",
+            "type": "number",
+            "instructions": "Isi dengan angka (misal: 20). Harga akhir akan dikurangi angka ini.",
+            "required": 0,
+            "conditional_logic": [
+                [
+                    {
+                        "field": "field_68a1e7881d531",
+                        "operator": "==",
+                        "value": "dinamis_adv"
+                    }
+                ]
+            ],
             "wrapper": {
                 "width": "",
                 "class": "",
@@ -55,5 +172,5 @@
     "description": "",
     "show_in_rest": 0,
     "qef_simple_location_rules": 0,
-    "modified": 1755434103
+    "modified": 1755441167
 }

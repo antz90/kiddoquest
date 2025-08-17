@@ -185,7 +185,17 @@ function kiddoquest_handle_purchase()
     $point_type_slug = '';
 
     if ($item_type === 'item-kamar') {
-        $price = (int) get_field('harga_item_kamar', $item_id);
+        $price_type = get_field('tipe_harga_item', $item_id);
+
+        if ($price_type === 'dinamis_adv') {
+            $total_potential_coins = kiddoquest_get_daily_potential_coins($player_id);
+            $percentage = (int) get_field('persentase_harga_item', $item_id);
+            $deduction = (int) get_field('pengurangan_harga_item', $item_id);
+            $calculated_price = floor((($percentage / 100) * $total_potential_coins) - $deduction);
+            $price = max(1, $calculated_price);
+        } else { // 'statis'
+            $price = (int) get_field('harga_item_statis', $item_id);
+        }
         $point_type_slug = 'coin';
 
         // Validation: Check if item is already owned

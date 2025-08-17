@@ -196,6 +196,7 @@ get_header();
                 ];
                 $item_query = new WP_Query($item_query_args);
 
+                $total_potential_coins = kiddoquest_get_daily_potential_coins($player_id);
                 $owned_items = get_user_meta($player_id, 'owned_items', true);
                 if (!is_array($owned_items)) $owned_items = [];
 
@@ -203,7 +204,25 @@ get_header();
                         $item_id = get_the_ID();
                         $price = (int) get_field('harga_item_kamar');
                         $is_owned = in_array($item_id, $owned_items);
-                        $can_afford = $coin_balance >= $price;
+
+                        // --- ADVANCED DYNAMIC PRICING LOGIC ---
+                        $price_type = get_field('tipe_harga_item');
+                        $final_price = 0;
+                        $price_text = '';
+
+                        if ($price_type === 'dinamis_adv') {
+                            $percentage = (int) get_field('persentase_harga_item');
+                            $deduction = (int) get_field('pengurangan_harga_item');
+                            // Calculate the price with the new formula
+                            $calculated_price = floor((($percentage / 100) * $total_potential_coins) - $deduction);
+                            // Ensure price is never below a minimum (e.g., 1)
+                            $final_price = max(1, $calculated_price);
+                            $price_text = "($percentage% - $deduction)";
+                        } else { // 'statis'
+                            $final_price = (int) get_field('harga_item_statis');
+                        }
+
+                        $can_afford = $coin_balance >= $final_price;
                 ?>
                         <div class="bg-white/80 backdrop-blur-sm p-4 rounded-xl shadow-lg text-center flex flex-col">
                             <?php the_post_thumbnail('medium', ['class' => 'w-full h-32 object-contain mb-2 rounded']); ?>
@@ -218,8 +237,8 @@ get_header();
                                         <?php if (!$can_afford) echo 'disabled'; ?> onclick="purchaseItem(this)"
                                         data-id="<?php echo $item_id; ?>" data-type="item-kamar">
                                         <span class="flex items-center justify-center gap-1">
-                                            <?php echo $price; ?> <img src="<?php echo esc_url($points_coin_data['icon_url']); ?>"
-                                                class="w-5 h-5">
+                                            <?php echo $final_price; ?> <img
+                                                src="<?php echo esc_url($points_coin_data['icon_url']); ?>" class="w-5 h-5">
                                         </span>
                                     </button>
                                 <?php endif; ?>
