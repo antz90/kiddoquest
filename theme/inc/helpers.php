@@ -132,3 +132,27 @@ function kiddoquest_get_daily_potential_coins($player_id)
     }
     return $total_potential;
 }
+
+
+/**
+ * Gets the maximum possible coin points for a single task post ID.
+ *
+ * @param int $task_id The ID of the task post.
+ * @return int The highest possible coin value.
+ */
+function kiddoquest_get_max_points_for_task($task_id)
+{
+    if (!$task_id) return 0;
+
+    $max_points = (int) get_field('point_koin_tugas', $task_id);
+
+    if (have_rows('point_koin_berwaktu', $task_id)) {
+        while (have_rows('point_koin_berwaktu', $task_id)) : the_row();
+            $timed_coins = (int) get_sub_field('jumlah_koin');
+            if ($timed_coins > $max_points) {
+                $max_points = $timed_coins;
+            }
+        endwhile;
+    }
+    return $max_points;
+}
