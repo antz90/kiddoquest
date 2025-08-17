@@ -243,3 +243,4 @@ require_once __DIR__ . '/inc/helpers.php';
 require_once __DIR__ . '/inc/ajax.php';
 require_once __DIR__ . '/inc/gamipress-helpers.php';
 require_once __DIR__ . '/inc/cron-jobs.php';
+require_once __DIR__ . '/inc/admin-columns.php';

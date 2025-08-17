@@ -158,17 +158,23 @@ get_header();
                                         <p class="task-name font-bold text-gray-700"><?php echo esc_html($task_title); ?></p>
                                         <div
                                             class="task-reward text-xs flex items-center gap-2 mt-1 <?php echo ($task_index % 2 === 0) ? 'justify-start' : 'justify-end'; ?>">
-                                            <span class="flex items-center gap-1 <?php echo $coin_color_class; ?>">
-                                                <b><?php echo $coin_sign . $coin_points; ?></b>
-                                                <?php if ($points_coin_data) echo '<img src="' . esc_url($points_coin_data['icon_url']) . '" class="w-4 h-4 object-contain">'; ?>
-                                            </span>
-                                            <span class="flex items-center gap-1 text-gray-500">
-                                                <b>+<?php echo $star_points; ?></b>
-                                                <?php if ($points_star_data) echo '<img src="' . esc_url($points_star_data['icon_url']) . '" class="w-4 h-4 object-contain">'; ?>
-                                            </span>
-                                            <span class="flex items-center gap-1 text-gray-600">
-                                                <b>+<?php echo $xp_points; ?> XP</b>
-                                            </span>
+                                            <?php if ($is_completed) : ?>
+                                                <span class="flex items-center gap-1 text-gray-500">
+                                                    SELESAI
+                                                </span>
+                                            <?php else : ?>
+                                                <span class="flex items-center gap-1 <?php echo $coin_color_class; ?>">
+                                                    <b><?php echo $coin_sign . $coin_points; ?></b>
+                                                    <?php if ($points_coin_data) echo '<img src="' . esc_url($points_coin_data['icon_url']) . '" class="w-4 h-4 object-contain">'; ?>
+                                                </span>
+                                                <span class="flex items-center gap-1 text-gray-500">
+                                                    <b>+<?php echo $star_points; ?></b>
+                                                    <?php if ($points_star_data) echo '<img src="' . esc_url($points_star_data['icon_url']) . '" class="w-4 h-4 object-contain">'; ?>
+                                                </span>
+                                                <span class="flex items-center gap-1 text-gray-600">
+                                                    <b>+<?php echo $xp_points; ?> XP</b>
+                                                </span>
+                                            <?php endif; ?>
                                         </div>
                                     </div>
                                 </div>

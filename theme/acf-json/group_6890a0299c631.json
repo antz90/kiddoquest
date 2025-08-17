@@ -31,10 +31,10 @@
             "allow_backendsearch": 0,
             "show_column_filter": false,
             "allow_bulkedit": 0,
-            "allow_quickedit": 0,
-            "show_column": 0,
-            "show_column_weight": 1000,
-            "show_column_sortable": false,
+            "allow_quickedit": 1,
+            "show_column": 1,
+            "show_column_weight": 110,
+            "show_column_sortable": 0,
             "key": "field_689aec3b067c2",
             "label": "Point XP",
             "name": "point_xp",
@@ -255,5 +255,5 @@
     "description": "",
     "show_in_rest": 0,
     "qef_simple_location_rules": 0,
-    "modified": 1755267700
+    "modified": 1755436614
 }

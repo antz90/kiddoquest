@@ -18,7 +18,7 @@ function kiddoquest_add_monthly_cron_schedule($schedules)
 if (!wp_next_scheduled('kiddoquest_daily_coin_reset_event')) {
     // Schedule the daily event to run at 18:30 server time.
     // WordPress will run it at the first opportunity after this time.
-    wp_schedule_event(strtotime('today 18:30:00'), 'daily', 'kiddoquest_daily_coin_reset_event');
+    wp_schedule_event(strtotime('today 18:45:00'), 'daily', 'kiddoquest_daily_coin_reset_event');
 }
 if (!wp_next_scheduled('kiddoquest_monthly_star_reset_event')) {
     // Schedule the monthly event.

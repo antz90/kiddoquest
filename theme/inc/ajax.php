@@ -276,6 +276,9 @@ function kiddoquest_handle_purchase()
         update_post_meta($log_post_id, '_user_id', $player_id);
         update_post_meta($log_post_id, '_purchased_item_id', $item_id); // Simpan ID item yang dibeli
         update_post_meta($log_post_id, '_log_type', 'purchase'); // Tandai sebagai log pembelian
+
+        update_post_meta($log_post_id, '_purchase_cost', $price);
+        update_post_meta($log_post_id, '_purchase_point_type', $point_type_slug);
     }
 
     // If it's a room item, we still need to save it to the owned_items meta for the "Kamar" feature
