@@ -534,11 +534,8 @@ h1, h2, h3, .font-game {
 .top-4 {
   top: calc(var(--spacing) * 4);
 }
-.top-32 {
-  top: calc(var(--spacing) * 32);
-}
-.-right-2 {
-  right: calc(var(--spacing) * -2);
+.top-\[95px\] {
+  top: 95px;
 }
 .right-1\/2 {
   right: calc(1/2 * 100%);
@@ -548,9 +545,6 @@ h1, h2, h3, .font-game {
 }
 .right-4 {
   right: calc(var(--spacing) * 4);
-}
-.-bottom-2 {
-  bottom: calc(var(--spacing) * -2);
 }
 .bottom-0 {
   bottom: calc(var(--spacing) * 0);
@@ -1517,14 +1511,6 @@ h1, h2, h3, .font-game {
     background-color: color-mix(in oklab, var(--color-white) 20%, transparent);
   }
 }
-.bg-white\/50 {
-  background-color: color-mix(in srgb, #fff 50%, transparent);
-}
-@supports (color: color-mix(in lab, red, red)) {
-  .bg-white\/50 {
-    background-color: color-mix(in oklab, var(--color-white) 50%, transparent);
-  }
-}
 .bg-white\/80 {
   background-color: color-mix(in srgb, #fff 80%, transparent);
 }
@@ -1926,6 +1912,11 @@ h1, h2, h3, .font-game {
 @media (width >= 48rem) {
   .md\:grid-cols-4 {
     grid-template-columns: repeat(4, minmax(0, 1fr));
+  }
+}
+@media (width >= 48rem) {
+  .md\:grid-cols-5 {
+    grid-template-columns: repeat(5, minmax(0, 1fr));
   }
 }
 @media (width >= 48rem) {

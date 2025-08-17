@@ -20,7 +20,7 @@ $xp_balance   = gamipress_get_user_points($player_id, 'xp');
 $player_level_data = kiddoquest_get_player_custom_level_progress($xp_balance);
 
 ?>
-<div class="ganti-pemain fixed top-32 left-4 z-40 flex flex-col gap-2 items-center">
+<div class="ganti-pemain fixed top-[95px] left-4 z-40 flex flex-col gap-2 items-center">
     <a href="<?php echo esc_url(add_query_arg('action', 'ganti', home_url())); ?>"
         class="btn-game bg-purple-500 !py-3 !px-3 !rounded-full shadow-lg" title="Ganti Pemain"
         style="box-shadow: 0 4px 0 #6b21a8;">

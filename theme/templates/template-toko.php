@@ -37,7 +37,26 @@ get_header();
             <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
                 <?php
                 $total_potential_coins = kiddoquest_get_daily_potential_coins($player_id);
-                $reward_query = new WP_Query(['post_type' => 'hadiah', 'posts_per_page' => -1]);
+                $reward_query_args = [
+                    'post_type' => 'hadiah',
+                    'posts_per_page' => -1,
+                    'meta_query' => [
+                        'relation' => 'OR', // Show if one of these is true
+                        [
+                            // Condition 1: The 'assigned users' field is NOT SET or EMPTY
+                            // This means it's a public reward for everyone.
+                            'key' => 'hadiah_untuk_user',
+                            'compare' => 'NOT EXISTS',
+                        ],
+                        [
+                            // Condition 2: The 'assigned users' field CONTAINS the current player's ID
+                            'key' => 'hadiah_untuk_user',
+                            'value' => '"' . $player_id . '"', // Must be quoted for serialized array search
+                            'compare' => 'LIKE',
+                        ],
+                    ],
+                ];
+                $reward_query = new WP_Query($reward_query_args);
                 $today_date = current_time('Y-m-d');
 
                 if ($reward_query->have_posts()) : while ($reward_query->have_posts()) : $reward_query->the_post();
@@ -92,7 +111,7 @@ get_header();
 
                             // If not in window, prepare the message
                             if (!$is_in_time_window) {
-                                $time_message = "Tersedia jam " . date("H:i", $start_ts);
+                                $time_message = "(Jam " . date("H:i", $start_ts) . ' - ' .  date("H:i", $end_ts) . ')';
                             }
                         }
 
@@ -123,14 +142,20 @@ get_header();
                                     class="btn-game w-full text-sm <?php if (!$is_buyable) echo 'bg-gray-400 cursor-not-allowed'; ?>"
                                     <?php if (!$is_buyable) echo 'disabled'; ?> onclick="purchaseItem(this)"
                                     data-id="<?php echo $reward_id; ?>" data-type="hadiah">
-                                    <span class="flex items-center justify-center gap-1">
+                                    <span class="flex items-center justify-center gap-1 flex-col">
                                         <?php if ($already_bought_today) : ?>
                                             <span class="text-xs">Sudah Dibeli</span>
                                         <?php elseif (!$is_in_time_window) : ?>
+                                            <span class="flex gap-1">
+                                                <?php echo $final_price; ?>
+                                                <img src="<?php echo esc_url($point_icon); ?>" class="w-5 h-5">
+                                            </span>
                                             <span class="text-xs"><?php echo $time_message; ?></span>
                                         <?php else: ?>
-                                            <?php echo $final_price; ?>
-                                            <img src="<?php echo esc_url($point_icon); ?>" class="w-5 h-5">
+                                            <span class="flex gap-1">
+                                                <?php echo $final_price; ?>
+                                                <img src="<?php echo esc_url($point_icon); ?>" class="w-5 h-5">
+                                            </span>
                                         <?php endif; ?>
                                     </span>
                                 </button>

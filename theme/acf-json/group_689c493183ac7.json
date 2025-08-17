@@ -248,6 +248,37 @@
             "display_format": "g:i a",
             "return_format": "H:i",
             "allow_in_bindings": 0
+        },
+        {
+            "allow_backendsearch": false,
+            "show_column_filter": false,
+            "allow_bulkedit": 0,
+            "allow_quickedit": 0,
+            "show_column": 0,
+            "show_column_weight": 1000,
+            "show_column_sortable": false,
+            "key": "field_68a1bb37346fa",
+            "label": "Hadiah Untuk User Tertentu",
+            "name": "hadiah_untuk_user",
+            "aria-label": "",
+            "type": "user",
+            "instructions": "Kosongkan jika hadiah ini tersedia untuk semua anak. Isi jika hanya untuk anak tertentu.",
+            "required": 0,
+            "conditional_logic": 0,
+            "wrapper": {
+                "width": "",
+                "class": "",
+                "id": ""
+            },
+            "role": [
+                "subscriber"
+            ],
+            "return_format": "array",
+            "multiple": 1,
+            "allow_null": 0,
+            "allow_in_bindings": 0,
+            "bidirectional": 0,
+            "bidirectional_target": []
         }
     ],
     "location": [
@@ -272,5 +303,5 @@
     "description": "",
     "show_in_rest": 0,
     "qef_simple_location_rules": 0,
-    "modified": 1755267662
+    "modified": 1755429756
 }

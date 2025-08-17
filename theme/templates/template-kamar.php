@@ -13,17 +13,25 @@ $player_id = $_SESSION['active_player_id'];
 $bg_url = get_field('background_kamar', 'user_' . $player_id);
 $char_url = get_field('gambar_karakter', 'user_' . $player_id);
 
-// Get the master list of all purchased items
-$owned_item_ids = get_user_meta($player_id, 'owned_items', true);
-if (!is_array($owned_item_ids)) $owned_item_ids = [];
+// --- FIX PART 1: Clean up the owned items list first ---
+$owned_item_ids_raw = get_user_meta($player_id, 'owned_items', true);
+if (!is_array($owned_item_ids_raw)) $owned_item_ids_raw = [];
+
+// Filter out any items that may have been deleted from the CPT
+$valid_owned_item_ids = [];
+foreach ($owned_item_ids_raw as $item_id) {
+    if (get_post_status($item_id) === 'publish') {
+        $valid_owned_item_ids[] = $item_id;
+    }
+}
 
 // Get the list of items currently placed in the room
 $placed_items_layout = get_user_meta($player_id, 'room_layout', true);
 if (!is_array($placed_items_layout)) $placed_items_layout = [];
 
-// Determine which items are "in the closet" (owned but not placed)
+// Calculate which items are "in the closet" using the cleaned list
 $placed_item_ids = wp_list_pluck($placed_items_layout, 'item_id');
-$stowed_item_ids = array_diff($owned_item_ids, $placed_item_ids);
+$stowed_item_ids = array_diff($valid_owned_item_ids, $placed_item_ids);
 
 get_header();
 ?>
@@ -91,16 +99,19 @@ get_header();
                         class="h-full w-auto max-h-[450px] bottom-0 left-4" alt="Karakter">
                 <?php endif; ?>
 
-                <?php foreach ($placed_items_layout as $item) : ?>
-                    <?php
-                    $x_pos = esc_attr($item['x']);
-                    $y_pos = esc_attr($item['y']);
-                    $z_pos = esc_attr($item['z'] ?? 1);
+                <?php foreach ($placed_items_layout as $item) :
+                    if (get_post_status($item['item_id']) === 'publish') :
+                        $item_img_url = get_the_post_thumbnail_url($item['item_id'], 'medium');
+                        $x_pos = esc_attr($item['x']);
+                        $y_pos = esc_attr($item['y']);
+                        $z_pos = esc_attr($item['z'] ?? 1);
+                ?>
+                        <img src="<?php echo esc_url(get_the_post_thumbnail_url($item['item_id'], 'medium')); ?>"
+                            class="placed-item" draggable="false" data-item-id="<?php echo esc_attr($item['item_id']); ?>"
+                            style="transform: translate(<?php echo $x_pos; ?>px, <?php echo $y_pos; ?>px); z-index: <?php echo $z_pos; ?>;"
+                            data-x="<?php echo $x_pos; ?>" data-y="<?php echo $y_pos; ?>" data-z="<?php echo $z_pos; ?>">
+                    <?php endif; // End check for get_post_status 
                     ?>
-                    <img src="<?php echo esc_url(get_the_post_thumbnail_url($item['item_id'], 'medium')); ?>"
-                        class="placed-item" draggable="false" data-item-id="<?php echo esc_attr($item['item_id']); ?>"
-                        style="transform: translate(<?php echo $x_pos; ?>px, <?php echo $y_pos; ?>px); z-index: <?php echo $z_pos; ?>;"
-                        data-x="<?php echo $x_pos; ?>" data-y="<?php echo $y_pos; ?>" data-z="<?php echo $z_pos; ?>">
                 <?php endforeach; ?>
             </div>
 

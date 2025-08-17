@@ -196,6 +196,12 @@ function kiddoquest_handle_purchase()
         }
     } elseif ($item_type === 'hadiah') {
         $price_type = get_field('tipe_harga', $item_id);
+        $assigned_users = get_field('hadiah_untuk_user', $item_id);
+
+        if (!empty($assigned_users) && !in_array($player_id, wp_list_pluck($assigned_users, 'ID'))) {
+            wp_send_json_error(['message' => 'Anda tidak berhak membeli hadiah ini.']);
+            return;
+        }
 
         if ($price_type === 'dinamis') {
             $total_potential_coins = kiddoquest_get_daily_potential_coins($player_id);
@@ -405,9 +411,9 @@ function kiddoquest_log_journal_after_submission($entry, $form)
     ]);
 
     // Award points for writing in the journal
-    if ($new_post_id) {
-        gamipress_award_points_to_user($player_id, 20, 'xp', ['log_title' => 'Menulis Jurnal']);
-        gamipress_award_points_to_user($player_id, 20, 'coin', ['log_title' => 'Menulis Jurnal']);
-    }
+    // if ($new_post_id) {
+    //     gamipress_award_points_to_user($player_id, 20, 'xp', ['log_title' => 'Menulis Jurnal']);
+    //     gamipress_award_points_to_user($player_id, 20, 'coin', ['log_title' => 'Menulis Jurnal']);
+    // }
 }
 add_action('gform_after_submission_1', 'kiddoquest_log_journal_after_submission', 10, 2); // Change _1 to your form ID

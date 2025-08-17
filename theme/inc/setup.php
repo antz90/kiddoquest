@@ -12,6 +12,8 @@ function kiddoquest_start_session()
 }
 add_action('init', 'kiddoquest_start_session', 1);
 
+add_filter('show_admin_bar', '__return_false');
+
 // Global login redirect rules
 function kiddoquest_template_redirect()
 {
