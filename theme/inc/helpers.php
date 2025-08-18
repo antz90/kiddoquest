@@ -94,13 +94,13 @@ function kiddoquest_get_all_point_types_data()
 }
 
 /**
- * Calculates the MAXIMUM potential coins a player can earn today.
- * It checks timed bonuses and takes the highest possible value for each task.
+ * Calculates potential coins a player can earn, can be filtered by shift.
  *
  * @param int $player_id The ID of the player.
- * @return int The total maximum potential coins for the day.
+ * @param string $shift 'full_day' or 'pagi_siang'.
+ * @return int The total potential coins.
  */
-function kiddoquest_get_daily_potential_coins($player_id)
+function kiddoquest_get_potential_coins($player_id, $shift = 'full_day')
 {
     $total_potential = 0;
     $today = current_time('l');
@@ -111,21 +111,16 @@ function kiddoquest_get_daily_potential_coins($player_id)
             if (is_array($scheduled_days) && in_array($today, $scheduled_days)) {
                 $task_post = get_sub_field('pilih_tugas');
                 if ($task_post) {
-                    // 1. Start with the base coin value.
-                    $max_points_for_this_task = (int) get_field('point_koin_tugas', $task_post->ID);
-
-                    // 2. Check for timed bonuses.
-                    if (have_rows('point_koin_berwaktu', $task_post->ID)) {
-                        while (have_rows('point_koin_berwaktu', $task_post->ID)) : the_row();
-                            $timed_coins = (int) get_sub_field('jumlah_koin');
-                            // 3. If a timed bonus is higher, use that value instead.
-                            if ($timed_coins > $max_points_for_this_task) {
-                                $max_points_for_this_task = $timed_coins;
-                            }
-                        endwhile;
+                    // If we only want the morning shift, check the task's time setting.
+                    if ($shift === 'pagi_siang') {
+                        $task_time = get_field('waktu_tugas', $task_post->ID);
+                        if ($task_time !== 'pagi_siang') {
+                            continue; // Skip this task if it's not a morning/afternoon task.
+                        }
                     }
-                    // 4. Add the highest possible value to the daily total.
-                    $total_potential += $max_points_for_this_task;
+
+                    // We use our other helper function to get the max points for the task.
+                    $total_potential += kiddoquest_get_max_points_for_task($task_post->ID);
                 }
             }
         endwhile;

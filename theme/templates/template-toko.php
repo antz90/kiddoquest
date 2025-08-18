@@ -36,7 +36,7 @@ get_header();
             <h2 class="font-game text-3xl text-white mb-4" style="text-shadow: 1px 1px 2px #000;">Hadiah Spesial</h2>
             <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
                 <?php
-                $total_potential_coins = kiddoquest_get_daily_potential_coins($player_id);
+                $total_potential_coins = kiddoquest_get_potential_coins($player_id, 'pagi_siang');
                 $reward_query_args = [
                     'post_type' => 'hadiah',
                     'posts_per_page' => -1,
@@ -196,7 +196,7 @@ get_header();
                 ];
                 $item_query = new WP_Query($item_query_args);
 
-                $total_potential_coins = kiddoquest_get_daily_potential_coins($player_id);
+                $total_potential_coins = kiddoquest_get_potential_coins($player_id, 'full_day');
                 $owned_items = get_user_meta($player_id, 'owned_items', true);
                 if (!is_array($owned_items)) $owned_items = [];
 

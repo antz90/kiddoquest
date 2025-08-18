@@ -188,7 +188,7 @@ function kiddoquest_handle_purchase()
         $price_type = get_field('tipe_harga_item', $item_id);
 
         if ($price_type === 'dinamis_adv') {
-            $total_potential_coins = kiddoquest_get_daily_potential_coins($player_id);
+            $total_potential_coins = kiddoquest_get_potential_coins($player_id, 'full_day');
             $percentage = (int) get_field('persentase_harga_item', $item_id);
             $deduction = (int) get_field('pengurangan_harga_item', $item_id);
             $calculated_price = floor((($percentage / 100) * $total_potential_coins) - $deduction);
@@ -214,7 +214,7 @@ function kiddoquest_handle_purchase()
         }
 
         if ($price_type === 'dinamis') {
-            $total_potential_coins = kiddoquest_get_daily_potential_coins($player_id);
+            $total_potential_coins = kiddoquest_get_potential_coins($player_id, 'pagi_siang');
             $price_percentage = (int) get_field('persentase_harga_koin', $item_id);
             $price = floor(($price_percentage / 100) * $total_potential_coins);
             $point_type_slug = 'coin';
