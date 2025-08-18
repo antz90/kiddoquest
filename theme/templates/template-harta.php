@@ -17,7 +17,7 @@ get_header();
 
     <?php get_template_part('template-parts/layout/header', 'game'); ?>
 
-    <main class="relative z-10 p-4">
+    <main class="relative z-10 pt-0 pb-48 px-4 max-w-5xl mx-auto">
         <h1 class="text-4xl text-white text-center font-game mb-6" style="text-shadow: 2px 2px 4px rgba(0,0,0,0.3);">
             Harta Karun</h1>
 

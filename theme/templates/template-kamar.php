@@ -80,7 +80,7 @@ get_header();
 
     <?php get_template_part('template-parts/layout/header', 'game'); ?>
 
-    <main class="p-4 relative z-0">
+    <main class="relative z-10 pt-4 pb-52 px-4">
         <div class="flex justify-between items-center mb-4">
             <span class="kosong"></span>
             <h1 class="text-4xl text-white text-center font-game" style="text-shadow: 2px 2px 4px rgba(0,0,0,0.3);">

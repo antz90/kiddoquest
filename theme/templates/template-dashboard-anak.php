@@ -86,6 +86,7 @@ get_header();
                             if ($log_check_query->have_posts()) {
                                 $is_completed = true;
                             }
+                            wp_reset_postdata();
 
                             // 1. Set default icon if ACF field is empty.
                             $icon_url = get_field('icon_tugas', $task_id);
