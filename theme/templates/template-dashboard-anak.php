@@ -314,6 +314,48 @@ get_header();
             }
         });
     }
+
+
+    function saveToPiggyBank(buttonElement) {
+        if (!confirm('Yakin mau menabung 25% dari sisa koinmu menjadi Permata permanen? Koin harianmu akan berkurang.')) {
+            return;
+        }
+
+        // Provide feedback
+        const container = document.getElementById('piggy-bank-button-container');
+        buttonElement.disabled = true;
+        buttonElement.innerHTML = '...';
+
+        jQuery.ajax({
+            url: '<?php echo admin_url('admin-ajax.php'); ?>',
+            type: 'POST',
+            data: {
+                action: 'save_to_piggy_bank',
+            },
+            success: function(response) {
+                if (response.success) {
+                    alert(response.data.message);
+                    // Update balances in real-time
+                    document.getElementById('coin-balance').textContent = response.data.new_coin_balance;
+                    document.getElementById('permata-balance').textContent = response.data.new_gem_balance;
+
+                    // Hide the button after successful saving to prevent multiple uses
+                    container.style.display = 'none';
+                } else {
+                    alert('Gagal! ' + response.data.message);
+                    buttonElement.disabled = false;
+                    buttonElement.innerHTML =
+                        '<img src="https://img.icons8.com/?size=100&id=43840&format=png&color=000000" class="w-8 h-8">';
+                }
+            },
+            error: function() {
+                alert('Oops! Gagal menghubungi server.');
+                buttonElement.disabled = false;
+                buttonElement.innerHTML =
+                    '<img src="https://img.icons8.com/?size=100&id=43840&format=png&color=000000" class="w-8 h-8">';
+            }
+        });
+    }
 </script>
 
 <?php

@@ -10,11 +10,13 @@ $all_point_types = kiddoquest_get_all_point_types_data();
 $points_coin_data = isset($all_point_types['coin']) ? $all_point_types['coin'] : null;
 $points_star_data = isset($all_point_types['star']) ? $all_point_types['star'] : null;
 $points_xp_data   = isset($all_point_types['xp']) ? $all_point_types['xp'] : null;
+$points_permata_data = isset($all_point_types['permata']) ? $all_point_types['permata'] : null;
 
 // Get user balances
 $coin_balance = gamipress_get_user_points($player_id, 'coin');
 $star_balance = gamipress_get_user_points($player_id, 'star');
 $xp_balance   = gamipress_get_user_points($player_id, 'xp');
+$permata_balance = gamipress_get_user_points($player_id, 'permata');
 
 // Get rank progress from our custom helper function in functions.php
 $player_level_data = kiddoquest_get_player_custom_level_progress($xp_balance);
@@ -35,6 +37,18 @@ $player_level_data = kiddoquest_get_player_custom_level_progress($xp_balance);
     </a>
     <span class="text-gray-500 text-xs font-bold">GANTI PEMAIN</span>
 </div>
+<?php
+// Check if it's after 6 PM (18:00)
+$now = (int) current_time('G'); // 'G' gives 24-hour format without leading zeros
+if ($now >= 18 && is_page('dashboard')) :
+?>
+    <div id="piggy-bank-button-container" class="fixed top-[185px] left-7 z-40" title="Tabung Sisa Koin Harianmu!">
+        <button id="piggy-bank-button" class="btn-game bg-pink-500 !py-3 !px-3 !rounded-full shadow-lg animate-pulse"
+            style="box-shadow: 0 4px 0 #c53093;" onclick="saveToPiggyBank(this)">
+            <img src="https://img.icons8.com/?size=100&id=43840&format=png&color=000000" class="w-8 h-8">
+        </button>
+    </div>
+<?php endif; ?>
 <header class="p-4 flex justify-between items-center sticky top-0 z-30">
     <div class="flex items-center gap-3 bg-white/80 backdrop-blur-sm p-2 pr-4 rounded-full shadow-lg">
         <img src="https://placehold.co/50x50/60A5FA/FFFFFF?text=<?php echo esc_html(strtoupper(substr($player_data->display_name, 0, 1))); ?>"
@@ -71,6 +85,13 @@ $player_level_data = kiddoquest_get_player_custom_level_progress($xp_balance);
                 title="<?php echo esc_attr($points_star_data['singular_name']); ?>">
                 <img src="<?php echo esc_url($points_star_data['icon_url']); ?>" class="w-6 h-6 object-contain" />
                 <span id="star-balance" class="font-bold text-gray-700 text-lg"><?php echo $star_balance; ?></span>
+            </div>
+        <?php endif; ?>
+        <?php if ($points_permata_data): ?>
+            <div class="flex items-center gap-1 bg-yellow-100 px-3 py-1 rounded-full"
+                title="<?php echo esc_attr($points_permata_data['singular_name']); ?>">
+                <img src="<?php echo esc_url($points_permata_data['icon_url']); ?>" class="w-6 h-6 object-contain" />
+                <span id="permata-balance" class="font-bold text-yellow-700 text-lg"><?php echo $permata_balance; ?></span>
             </div>
         <?php endif; ?>
     </div>

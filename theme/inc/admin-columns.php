@@ -46,6 +46,8 @@ function kiddoquest_log_tugas_custom_column_content($column, $post_id)
                 echo '💰 Laporan Koin';
             } elseif ($log_type === 'star_summary') {
                 echo '⭐ Laporan Bintang';
+            } elseif ($log_type === 'piggy_bank_deposit') {
+                echo '🐷 Menabung';
             } else {
                 echo '✅ Tugas Selesai';
             }
@@ -61,14 +63,19 @@ function kiddoquest_log_tugas_custom_column_content($column, $post_id)
                 echo '<strong>Item:</strong> ' . esc_html(get_the_title($item_id));
             } else {
                 // For summary logs, the detail is in the points column.
-                echo '<em>Laporan Harian/Bulanan</em>';
+                echo '<em>Laporan atau Aksi Sistem</em>';
             }
             break;
 
         case 'points':
             $log_type = get_post_meta($post_id, '_log_type', true);
 
-            if ($log_type === 'coin_summary') {
+            if ($log_type === 'piggy_bank_deposit') { // --- TAMBAHAN BARU ---
+                $coins = get_post_meta($post_id, '_coins_converted', true);
+                $gems = get_post_meta($post_id, '_gems_gained', true);
+                echo "<strong>Menukar:</strong> -" . $coins . ' 💰<br>';
+                echo "<strong>Menjadi:</strong> +" . $gems . ' 💎';
+            } elseif ($log_type === 'coin_summary') {
                 $total = get_post_meta($post_id, '_total_coins_earned', true);
                 echo "<strong>Total Harian:</strong> " . $total . ' 💰';
             } elseif ($log_type === 'star_summary') {

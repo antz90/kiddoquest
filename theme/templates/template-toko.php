@@ -16,9 +16,11 @@ $player_data = get_userdata($player_id);
 // Get current point balances and helper data
 $coin_balance = (int) gamipress_get_user_points($player_id, 'coin');
 $star_balance = (int) gamipress_get_user_points($player_id, 'star');
+$permata_balance = (int) gamipress_get_user_points($player_id, 'permata');
 $all_point_types = kiddoquest_get_all_point_types_data();
 $points_coin_data = isset($all_point_types['coin']) ? $all_point_types['coin'] : null;
 $points_star_data = isset($all_point_types['star']) ? $all_point_types['star'] : null;
+$points_permata_data = isset($all_point_types['permata']) ? $all_point_types['permata'] : null;
 $now = current_time('H:i'); // Get current time once for efficiency
 
 get_header();
@@ -205,24 +207,28 @@ get_header();
                         $price = (int) get_field('harga_item_kamar');
                         $is_owned = in_array($item_id, $owned_items);
 
-                        // --- ADVANCED DYNAMIC PRICING LOGIC ---
                         $price_type = get_field('tipe_harga_item');
                         $final_price = 0;
                         $price_text = '';
+                        $point_type = 'coin'; // Default to coin
+                        $point_icon = $points_coin_data['icon_url'];
 
                         if ($price_type === 'dinamis_adv') {
                             $percentage = (int) get_field('persentase_harga_item');
                             $deduction = (int) get_field('pengurangan_harga_item');
-                            // Calculate the price with the new formula
                             $calculated_price = floor((($percentage / 100) * $total_potential_coins) - $deduction);
-                            // Ensure price is never below a minimum (e.g., 1)
                             $final_price = max(1, $calculated_price);
                             $price_text = "($percentage% - $deduction)";
-                        } else { // 'statis'
+                        } elseif ($price_type === 'statis_permata') {
+                            $final_price = (int) get_field('harga_item_permata');
+                            $point_type = 'permata';
+                            $point_icon = $points_permata_data['icon_url'];
+                        } else { // 'statis' (coin)
                             $final_price = (int) get_field('harga_item_statis');
                         }
 
-                        $can_afford = $coin_balance >= $final_price;
+                        $current_balance = ($point_type === 'permata') ? $permata_balance : $coin_balance;
+                        $can_afford = $current_balance >= $final_price;
                 ?>
                         <div class="bg-white/80 backdrop-blur-sm p-4 rounded-xl shadow-lg text-center flex flex-col">
                             <?php the_post_thumbnail('medium', ['class' => 'w-full h-32 object-contain mb-2 rounded']); ?>
@@ -237,8 +243,8 @@ get_header();
                                         <?php if (!$can_afford) echo 'disabled'; ?> onclick="purchaseItem(this)"
                                         data-id="<?php echo $item_id; ?>" data-type="item-kamar">
                                         <span class="flex items-center justify-center gap-1">
-                                            <?php echo $final_price; ?> <img
-                                                src="<?php echo esc_url($points_coin_data['icon_url']); ?>" class="w-5 h-5">
+                                            <?php echo $final_price; ?> <img src="<?php echo esc_url($point_icon); ?>"
+                                                class="w-5 h-5">
                                         </span>
                                     </button>
                                 <?php endif; ?>

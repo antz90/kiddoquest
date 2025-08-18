@@ -103,6 +103,7 @@ Underscores and Varia are distributed under the terms of the GNU GPL v2 or later
   --radius-lg: 0.5rem;
   --radius-xl: 0.75rem;
   --radius-2xl: 1rem;
+  --animate-pulse: pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
   --animate-bounce: bounce 1s infinite;
   --blur-sm: 8px;
   --default-transition-duration: 150ms;
@@ -534,6 +535,18 @@ h1, h2, h3, .font-game {
 .top-\[95px\] {
   top: 95px;
 }
+.top-\[150px\] {
+  top: 150px;
+}
+.top-\[175px\] {
+  top: 175px;
+}
+.top-\[180px\] {
+  top: 180px;
+}
+.top-\[185px\] {
+  top: 185px;
+}
 .right-1\/2 {
   right: calc(1/2 * 100%);
 }
@@ -555,8 +568,14 @@ h1, h2, h3, .font-game {
 .left-4 {
   left: calc(var(--spacing) * 4);
 }
-.z-0 {
-  z-index: 0;
+.left-5 {
+  left: calc(var(--spacing) * 5);
+}
+.left-6 {
+  left: calc(var(--spacing) * 6);
+}
+.left-7 {
+  left: calc(var(--spacing) * 7);
 }
 .z-10 {
   z-index: 10;
@@ -1142,6 +1161,9 @@ h1, h2, h3, .font-game {
 .h-6 {
   height: calc(var(--spacing) * 6);
 }
+.h-8 {
+  height: calc(var(--spacing) * 8);
+}
 .h-10 {
   height: calc(var(--spacing) * 10);
 }
@@ -1257,6 +1279,9 @@ h1, h2, h3, .font-game {
 }
 .animate-bounce {
   animation: var(--animate-bounce);
+}
+.animate-pulse {
+  animation: var(--animate-pulse);
 }
 .cursor-not-allowed {
   cursor: not-allowed;
@@ -1602,9 +1627,6 @@ h1, h2, h3, .font-game {
 }
 .pr-4 {
   padding-right: calc(var(--spacing) * 4);
-}
-.pb-40 {
-  padding-bottom: calc(var(--spacing) * 40);
 }
 .pb-48 {
   padding-bottom: calc(var(--spacing) * 48);
@@ -2185,6 +2207,11 @@ h1, h2, h3, .font-game {
 @property --tw-duration {
   syntax: "*";
   inherits: false;
+}
+@keyframes pulse {
+  50% {
+    opacity: 0.5;
+  }
 }
 @keyframes bounce {
   0%, 100% {

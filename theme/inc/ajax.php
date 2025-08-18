@@ -193,10 +193,14 @@ function kiddoquest_handle_purchase()
             $deduction = (int) get_field('pengurangan_harga_item', $item_id);
             $calculated_price = floor((($percentage / 100) * $total_potential_coins) - $deduction);
             $price = max(1, $calculated_price);
-        } else { // 'statis'
+            $point_type_slug = 'coin';
+        } elseif ($price_type === 'statis_permata') {
+            $price = (int) get_field('harga_item_permata', $item_id);
+            $point_type_slug = 'permata';
+        } else { // 'statis' (coin)
             $price = (int) get_field('harga_item_statis', $item_id);
+            $point_type_slug = 'coin';
         }
-        $point_type_slug = 'coin';
 
         // Validation: Check if item is already owned
         $owned_items = get_user_meta($player_id, 'owned_items', true);
@@ -430,3 +434,76 @@ function kiddoquest_log_journal_after_submission($entry, $form)
     // }
 }
 add_action('gform_after_submission_1', 'kiddoquest_log_journal_after_submission', 10, 2); // Change _1 to your form ID
+
+
+/**
+ * Handles the logic for converting daily coins to permanent Gems (Permata).
+ */
+function kiddoquest_handle_save_to_piggy_bank()
+{
+    if (!isset($_SESSION['active_player_id'])) {
+        wp_send_json_error(['message' => 'Player tidak aktif.']);
+        return;
+    }
+    $player_id = $_SESSION['active_player_id'];
+
+    $deposit_log_query = new WP_Query([
+        'post_type'      => 'log-tugas',
+        'posts_per_page' => 1,
+        'date_query'     => [['year' => current_time('Y'), 'month' => current_time('m'), 'day' => current_time('d')]],
+        'meta_query'     => [
+            'relation' => 'AND',
+            ['key' => '_user_id', 'value' => $player_id],
+            ['key' => '_log_type', 'value' => 'piggy_bank_deposit'],
+        ],
+        'fields' => 'ids',
+    ]);
+    if ($deposit_log_query->have_posts()) {
+        wp_send_json_error(['message' => 'Kamu sudah menabung hari ini!']);
+        return;
+    }
+
+    $conversion_rate = 0.25; // 25%
+    $current_coins = (int) gamipress_get_user_points($player_id, 'coin');
+
+    if ($current_coins <= 0) {
+        wp_send_json_error(['message' => 'Tidak ada koin untuk ditabung.']);
+        return;
+    }
+
+    $coins_to_convert = floor($current_coins * $conversion_rate);
+
+    if ($coins_to_convert <= 0) {
+        wp_send_json_error(['message' => 'Jumlah koin terlalu kecil untuk ditabung.']);
+        return;
+    }
+
+    // --- Start Transaction ---
+    // 1. Deduct the daily coins
+    gamipress_deduct_points_to_user($player_id, $coins_to_convert, 'coin', ['log_title' => 'Menabung ke Celengan']);
+    // 2. Award the permanent Gems (Permata)
+    gamipress_award_points_to_user($player_id, $coins_to_convert, 'permata', ['log_title' => 'Menerima dari Tabungan']);
+
+    // 3. Create a log entry for this transaction in our custom CPT
+    $player_data = get_userdata($player_id);
+    $log_post_id = wp_insert_post([
+        'post_type'   => 'log-tugas',
+        'post_title'  => sprintf('Menabung %d Koin menjadi Permata - %s', $coins_to_convert, $player_data->display_name),
+        'post_status' => 'private',
+        'post_author' => $player_id,
+    ]);
+    if ($log_post_id) {
+        update_post_meta($log_post_id, '_user_id', $player_id);
+        update_post_meta($log_post_id, '_log_type', 'piggy_bank_deposit'); // New log type
+        update_post_meta($log_post_id, '_coins_converted', $coins_to_convert);
+        update_post_meta($log_post_id, '_gems_gained', $coins_to_convert);
+    }
+
+    // Send success response with new balances
+    wp_send_json_success([
+        'message'          => sprintf('%d Koin berhasil ditabung menjadi %d Permata!', $coins_to_convert, $coins_to_convert),
+        'new_coin_balance' => gamipress_get_user_points($player_id, 'coin'),
+        'new_gem_balance'  => gamipress_get_user_points($player_id, 'permata'),
+    ]);
+}
+add_action('wp_ajax_save_to_piggy_bank', 'kiddoquest_handle_save_to_piggy_bank');
