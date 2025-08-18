@@ -30,8 +30,8 @@ function kiddoquest_handle_task_completion()
         ],
         'meta_query' => [
             'relation' => 'AND',
-            ['_key' => '_user_id', 'value' => $player_id],
-            ['_key' => '_task_id', 'value' => $task_id],
+            ['key' => '_user_id', 'value' => $player_id],
+            ['key' => '_task_id', 'value' => $task_id],
         ],
     ]);
 
@@ -230,8 +230,8 @@ function kiddoquest_handle_purchase()
             'date_query' => [['year' => current_time('Y'), 'month' => current_time('m'), 'day' => current_time('d')]],
             'meta_query' => [
                 'relation' => 'AND',
-                ['_key' => '_user_id', 'value' => $player_id],
-                ['_key' => '_purchased_item_id', 'value' => $item_id], // Custom meta key for purchases
+                ['key' => '_user_id', 'value' => $player_id],
+                ['key' => '_purchased_item_id', 'value' => $item_id], // Custom meta key for purchases
             ],
         ]);
 

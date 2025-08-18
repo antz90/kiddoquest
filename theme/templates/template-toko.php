@@ -123,8 +123,8 @@ get_header();
                             'date_query' => [['year' => current_time('Y'), 'month' => current_time('m'), 'day' => current_time('d')]],
                             'meta_query' => [
                                 'relation' => 'AND',
-                                ['_key' => '_user_id', 'value' => $player_id],
-                                ['_key' => '_purchased_item_id', 'value' => $reward_id],
+                                ['key' => '_user_id', 'value' => $player_id],
+                                ['key' => '_purchased_item_id', 'value' => $reward_id],
                             ],
                             'fields' => 'ids',
                         ]);

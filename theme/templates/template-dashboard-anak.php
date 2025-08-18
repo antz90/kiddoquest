@@ -76,8 +76,8 @@ get_header();
                                 'date_query' => [['year' => current_time('Y'), 'month' => current_time('m'), 'day' => current_time('d')]],
                                 'meta_query' => [
                                     'relation' => 'AND',
-                                    ['_key' => '_user_id', 'value' => $player_id],
-                                    ['_key' => '_task_id', 'value' => $task_id],
+                                    ['key' => '_user_id', 'value' => $player_id], // Perbaikan
+                                    ['key' => '_task_id', 'value' => $task_id], // Perbaikan
                                 ],
                                 'fields' => 'ids', // more efficient
                                 'cache_results'          => false, // Jangan simpan hasil query ini di cache
