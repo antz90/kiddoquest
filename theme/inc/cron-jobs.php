@@ -76,7 +76,10 @@ function kiddoquest_execute_daily_coin_reset()
         }
 
         // --- C. Reset the coin balance to 0 ---
-        gamipress_update_user_points($player_id, 0, 'coin');
+        $current_balance = (int) gamipress_get_user_points($player_id, 'coin');
+        if ($current_balance > 0) {
+            gamipress_deduct_points_to_user($player_id, $current_balance, 'coin', ['log_title' => 'Reset Koin Harian']);
+        }
     }
 }
 
@@ -108,6 +111,8 @@ function kiddoquest_execute_monthly_star_reset()
         }
 
         // --- C. Reset the star balance to 0 ---
-        gamipress_update_user_points($player_id, 0, 'star');
+        if ($current_star_balance > 0) {
+            gamipress_deduct_points_to_user($player_id, $current_star_balance, 'star', ['log_title' => 'Reset Bintang Bulanan']);
+        }
     }
 }
