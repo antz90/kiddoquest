@@ -14,16 +14,16 @@ function kiddoquest_add_monthly_cron_schedule($schedules)
     return $schedules;
 }
 
-// 2. Schedule our events if they are not already scheduled.
-if (!wp_next_scheduled('kiddoquest_daily_coin_reset_event')) {
-    // Schedule the daily event to run at 18:30 server time.
-    // WordPress will run it at the first opportunity after this time.
-    wp_schedule_event(strtotime('today 23:50:00'), 'daily', 'kiddoquest_daily_coin_reset_event');
-}
-if (!wp_next_scheduled('kiddoquest_monthly_star_reset_event')) {
-    // Schedule the monthly event.
-    wp_schedule_event(strtotime('first day of next month 00:01:00'), 'monthly', 'kiddoquest_monthly_star_reset_event');
-}
+// // 2. Schedule our events if they are not already scheduled.
+// if (!wp_next_scheduled('kiddoquest_daily_coin_reset_event')) {
+//     // Schedule the daily event to run at 18:30 server time.
+//     // WordPress will run it at the first opportunity after this time.
+//     wp_schedule_event(strtotime('today 23:50:00'), 'daily', 'kiddoquest_daily_coin_reset_event');
+// }
+// if (!wp_next_scheduled('kiddoquest_monthly_star_reset_event')) {
+//     // Schedule the monthly event.
+//     wp_schedule_event(strtotime('first day of next month 00:01:00'), 'monthly', 'kiddoquest_monthly_star_reset_event');
+// }
 
 
 // 3. Hook the functions to our custom events.
@@ -43,14 +43,24 @@ function kiddoquest_execute_daily_coin_reset()
         $player_id = $player->ID;
 
         // --- A. Calculate total coins earned today ---
+        $today = getdate(current_time('timestamp')); // pakai timestamp biar ikut timezone WP
+        error_log("Running coin reset for user {$player_id} at " . current_time('mysql')); // debug log
+
         $today_logs = new WP_Query([
             'post_type'      => 'log-tugas',
             'posts_per_page' => -1,
-            'date_query'     => [['year' => current_time('Y'), 'month' => current_time('m'), 'day' => current_time('d')]],
+            'post_status'    => ['publish', 'private'],
+            'date_query'     => [[
+                'year'      => $today['year'],
+                'month'     => $today['mon'],
+                'day'       => $today['mday'],
+                'inclusive' => true,
+                'column'    => 'post_date',
+            ]],
             'meta_query'     => [
                 'relation' => 'AND',
                 ['key' => '_user_id', 'value' => $player_id],
-                ['key' => '_points_awarded_coin', 'compare' => 'EXISTS'], // Only get logs that have coin points
+                ['key' => '_points_awarded_coin', 'compare' => 'EXISTS'],
             ],
         ]);
 
@@ -61,6 +71,7 @@ function kiddoquest_execute_daily_coin_reset()
                 $total_coins_today += $coins;
             }
         }
+        error_log("Total coins today for user {$player_id}: " . $total_coins_today); // debug hasil
 
         // --- B. Create a summary log entry ---
         $log_post_id = wp_insert_post([
