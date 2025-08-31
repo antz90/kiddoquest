@@ -58,7 +58,7 @@ get_header();
     }
 
     .placed-item {
-        max-width: 64px;
+        max-width: 150px;
     }
 
     .placed-item:hover {

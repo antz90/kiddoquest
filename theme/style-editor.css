@@ -538,15 +538,6 @@ h1, h2, h3, .font-game {
 .top-\[95px\] {
   top: 95px;
 }
-.top-\[150px\] {
-  top: 150px;
-}
-.top-\[175px\] {
-  top: 175px;
-}
-.top-\[180px\] {
-  top: 180px;
-}
 .top-\[185px\] {
   top: 185px;
 }
@@ -570,12 +561,6 @@ h1, h2, h3, .font-game {
 }
 .left-4 {
   left: calc(var(--spacing) * 4);
-}
-.left-5 {
-  left: calc(var(--spacing) * 5);
-}
-.left-6 {
-  left: calc(var(--spacing) * 6);
 }
 .left-7 {
   left: calc(var(--spacing) * 7);

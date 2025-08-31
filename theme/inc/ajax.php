@@ -224,7 +224,7 @@ function kiddoquest_handle_purchase()
             $point_type_slug = 'coin';
         } else { // 'statis'
             $price = (int) get_field('harga_statis', $item_id);
-            $point_type_slug = get_field('jenis_point_statis', $item_id);
+            $point_type_slug = get_field('jenis_poin_statis', $item_id);
         }
 
         // --- VALIDASI BARU: Cek ke CPT 'log-tugas' ---
@@ -261,6 +261,8 @@ function kiddoquest_handle_purchase()
 
     // 3. CHECK PLAYER'S BALANCE
     $player_balance = (int) gamipress_get_user_points($player_id, $point_type_slug);
+
+    error_log('point type ' . $point_type_slug);
 
     if ($player_balance < $price) {
         // Create a more detailed error message for debugging.

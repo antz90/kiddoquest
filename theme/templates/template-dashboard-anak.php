@@ -149,7 +149,8 @@ get_header();
             ?>
                             <div class="task-node relative flex justify-center mb-24 <?php if ($is_completed) echo 'completed'; ?>"
                                 onclick="completeTask(this)" data-task-id="<?php echo esc_attr($task_id); ?>"
-                                data-player-id="<?php echo esc_attr($player_id); ?>">
+                                data-player-id="<?php echo esc_attr($player_id); ?>"
+                                data-coin-points="<?php echo esc_attr($coin_points); ?>">
                                 <div
                                     class="task-icon-wrapper w-20 h-20 <?php echo $current_color; ?> rounded-full flex items-center justify-center border-4 border-white shadow-lg z-10 relative">
                                     <img src="<?php echo esc_url($icon_url); ?>" class="w-10 h-10 transition-opacity" alt="Task Icon">
@@ -257,6 +258,14 @@ get_header();
     function completeTask(taskNodeElement) {
         if (taskNodeElement.classList.contains('completed') || taskNodeElement.classList.contains('processing')) {
             return;
+        }
+        const coinPoints = parseInt(taskNodeElement.dataset.coinPoints, 10);
+
+        if (coinPoints !== null) {
+            // Jika poinnya minus, tampilkan konfirmasi dulu
+            if (!confirm('Yakin sudah menyelesaikan tugas ini?')) {
+                return; // Jika anak klik "Cancel", hentikan fungsi di sini
+            }
         }
         taskNodeElement.classList.add('processing');
 
